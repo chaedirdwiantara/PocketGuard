@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HomeScreen } from '@screens/HomeScreen';
+import { DashboardScreen } from '@screens/DashboardScreen';
+import { AddTransactionScreen } from '@screens/AddTransactionScreen';
 import { colors } from '@theme/colors';
 
 const Stack = createNativeStackNavigator();
@@ -11,6 +12,7 @@ export const RootNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
+          headerShown: false,
           headerStyle: {
             backgroundColor: colors.background,
           },
@@ -20,7 +22,12 @@ export const RootNavigator = () => {
           },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        <Stack.Screen 
+          name="AddTransaction" 
+          component={AddTransactionScreen} 
+          options={{ presentation: 'modal' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

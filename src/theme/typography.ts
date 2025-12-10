@@ -1,48 +1,52 @@
-/**
- * PocketGuard Typography System
- */
+import { TextStyle } from 'react-native';
+import { colors } from './colors';
+import { sizes } from './spacing';
+
+export const weight = {
+    regular: '400' as const,
+    medium: '500' as const,
+    semiBold: '600' as const,
+    bold: '700' as const,
+};
 
 export const typography = {
-    size: {
-        xs: 12,
-        sm: 14,
-        md: 16,
-        lg: 20,
-        xl: 24,
-        xxl: 32,
-    },
-    weight: {
-        regular: '400',
-        medium: '500',
-        bold: '700',
-    } as const,
-    lineHeight: {
-        tight: 1.25,
-        normal: 1.5,
-        relaxed: 1.75,
-    },
-} as const;
+    weight,
+    sizes: sizes.text,
+};
 
-// Text styles helper
-export const textStyles = {
+type TextStyleKeys = 'h1' | 'h2' | 'h3' | 'body' | 'caption';
+
+export const textStyles: Record<TextStyleKeys, TextStyle> = {
     h1: {
-        fontSize: typography.size.xxl,
-        fontWeight: typography.weight.bold,
-        lineHeight: typography.size.xxl * typography.lineHeight.tight,
+        fontFamily: 'System',
+        fontSize: sizes.text.xl,
+        fontWeight: weight.bold,
+        lineHeight: 34,
+        letterSpacing: 0.36,
     },
     h2: {
-        fontSize: typography.size.xl,
-        fontWeight: typography.weight.bold,
-        lineHeight: typography.size.xl * typography.lineHeight.tight,
+        fontFamily: 'System',
+        fontSize: sizes.text.lg,
+        fontWeight: weight.bold,
+        lineHeight: 28,
+    },
+    h3: {
+        fontFamily: 'System',
+        fontSize: sizes.text.md,
+        fontWeight: weight.semiBold,
+        lineHeight: 24,
     },
     body: {
-        fontSize: typography.size.md,
-        fontWeight: typography.weight.regular,
-        lineHeight: typography.size.md * typography.lineHeight.normal,
+        fontFamily: 'System',
+        fontSize: sizes.text.md,
+        fontWeight: weight.regular,
+        lineHeight: 22,
     },
     caption: {
-        fontSize: typography.size.sm,
-        fontWeight: typography.weight.medium,
-        lineHeight: typography.size.sm * typography.lineHeight.normal,
+        fontFamily: 'System',
+        fontSize: sizes.text.sm,
+        fontWeight: weight.regular,
+        lineHeight: 18,
+        letterSpacing: 0.2,
     },
-} as const;
+};
