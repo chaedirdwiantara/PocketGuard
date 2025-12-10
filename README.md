@@ -1,97 +1,133 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# PocketGuard 💰
 
-# Getting Started
+Aplikasi pengatur keuangan pribadi yang dibuat dengan React Native CLI.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 📋 Informasi Project
 
-## Step 1: Start Metro
+| Item | Detail |
+|------|--------|
+| **Platform** | iOS & Android |
+| **React Native** | 0.82.1 |
+| **React** | 19.1.1 |
+| **Package Name (Android)** | com.pocketguard.app |
+| **Bundle ID (iOS)** | com.pocketguard.app |
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🚀 Menjalankan Aplikasi
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Prerequisites
 
-```sh
-# Using npm
+Pastikan environment development sudah terkonfigurasi dengan benar:
+- Node.js >= 20
+- Watchman
+- Xcode (untuk iOS)
+- Android Studio + Android SDK (untuk Android)
+- CocoaPods (untuk iOS)
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Install iOS Pods
+
+```bash
+cd ios && pod install && cd ..
+```
+
+### 3. Menjalankan Metro Bundler
+
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
+### 4. Menjalankan di iOS Simulator
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
+# atau dengan simulator spesifik
+npm run ios -- --simulator="iPhone 15 Pro"
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 5. Menjalankan di Android Emulator
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Pastikan emulator Android sudah berjalan, kemudian:
 
-## Step 3: Modify your app
+```bash
+npm run android
+```
 
-Now that you have successfully run the app, let's make changes!
+## 📁 Struktur Project
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+```
+PocketGuard/
+├── android/           # Native Android project
+├── ios/               # Native iOS project
+├── node_modules/      # Dependencies
+├── __tests__/         # Test files
+├── App.tsx            # Main application component
+├── index.js           # Entry point
+├── app.json           # App configuration
+├── package.json       # Project dependencies
+├── metro.config.js    # Metro bundler config
+├── babel.config.js    # Babel configuration
+├── tsconfig.json      # TypeScript configuration
+└── README.md          # Project documentation
+```
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## 🛠 Scripts
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+| Script | Deskripsi |
+|--------|-----------|
+| `npm start` | Menjalankan Metro bundler |
+| `npm run android` | Build & run di Android |
+| `npm run ios` | Build & run di iOS |
+| `npm run lint` | Menjalankan ESLint |
+| `npm test` | Menjalankan Jest tests |
 
-## Congratulations! :tada:
+## 🎯 Roadmap Fitur
 
-You've successfully run and modified your React Native App. :partying_face:
+### Phase 1 - Foundation ✅
+- [x] Setup React Native CLI project
+- [x] Konfigurasi iOS & Android
+- [x] Verifikasi build di kedua platform
 
-### Now what?
+### Phase 2 - Core Features (Coming Soon)
+- [ ] Dashboard overview keuangan
+- [ ] Input pemasukan & pengeluaran
+- [ ] Kategori transaksi
+- [ ] Riwayat transaksi
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+### Phase 3 - Advanced Features (Planned)
+- [ ] Grafik & visualisasi data
+- [ ] Budget planner
+- [ ] Reminder pembayaran
+- [ ] Export laporan (PDF/CSV)
+- [ ] Backup & restore data
 
-# Troubleshooting
+## 🔧 Troubleshooting
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### iOS Build Error
+```bash
+cd ios && rm -rf Pods Podfile.lock && pod install && cd ..
+```
 
-# Learn More
+### Android Build Error
+```bash
+cd android && ./gradlew clean && cd ..
+npm run android
+```
 
-To learn more about React Native, take a look at the following resources:
+### Metro Bundler Issues
+```bash
+watchman watch-del-all
+npm start -- --reset-cache
+```
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📝 License
+
+MIT License - Feel free to use and modify.
+
+---
+
+**Created with ❤️ using React Native CLI**
