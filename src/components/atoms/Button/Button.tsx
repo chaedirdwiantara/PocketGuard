@@ -13,6 +13,7 @@ interface ButtonProps extends TouchableOpacityProps {
   size?: ButtonSize;
   isLoading?: boolean;
   fullWidth?: boolean;
+  color?: string;
 }
 
 export const Button = ({
@@ -21,6 +22,7 @@ export const Button = ({
   size = 'md',
   isLoading = false,
   fullWidth = false,
+  color: customColor, // Rename to avoid conflict if any, though prop is custom
   disabled,
   style,
   ...props
@@ -32,20 +34,20 @@ export const Button = ({
     if (disabled) return colors.textTertiary;
     if (isOutline || isGhost) return 'transparent';
     if (variant === 'secondary') return colors.surface;
-    return colors.primary;
+    return customColor || colors.primary;
   };
 
   const getTextColor = () => {
     if (disabled) return colors.background;
-    if (isOutline || isGhost) return colors.primary;
-    if (variant === 'secondary') return colors.textPrimary;
+    if (isOutline || isGhost) return customColor || colors.primary;
+    if (variant === 'secondary') return customColor || colors.textPrimary;
     return colors.onPrimary;
   };
 
   const containerStyles = [
     styles.container,
     { backgroundColor: getBackgroundColor() },
-    isOutline && { borderWidth: 1, borderColor: colors.primary },
+    isOutline && { borderWidth: 1, borderColor: customColor || colors.primary },
     size === 'sm' && styles.sizeSm,
     size === 'md' && styles.sizeMd,
     size === 'lg' && styles.sizeLg,

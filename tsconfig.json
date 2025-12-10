@@ -1,6 +1,7 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
@@ -10,6 +11,7 @@
       "@utils/*": ["src/utils/*"],
       "@theme/*": ["src/theme/*"],
       "@store/*": ["src/store/*"],
+      "@database/*": ["src/services/database/*"],
       "@assets/*": ["src/assets/*"],
       "@types/*": ["src/types/*"]
     }

@@ -1,6 +1,7 @@
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
+    ['@babel/plugin-proposal-decorators', { legacy: true }],
     [
       'module-resolver',
       {
@@ -14,6 +15,7 @@ module.exports = {
           '@utils': './src/utils',
           '@theme': './src/theme',
           '@store': './src/store',
+          '@database': './src/services/database',
           '@assets': './src/assets',
           '@types': './src/types',
         },
