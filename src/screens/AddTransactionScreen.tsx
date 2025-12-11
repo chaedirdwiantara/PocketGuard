@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@theme/colors';
 import { spacing, borderRadius, shadows } from '@theme/spacing';
 import { Text } from '@components/atoms/Text';
 import { Button } from '@components/atoms/Button';
+import { Input } from '@components/atoms/Input';
 import { CategoryRepository } from '@database/repositories/CategoryRepository';
 import { TransactionRepository } from '@database/repositories/TransactionRepository';
 import Category from '@database/models/Category';
@@ -80,24 +81,22 @@ export const AddTransactionScreen = () => {
       </View>
 
       <View style={styles.form}>
-        <Text variant="caption" color={colors.textSecondary}>Amount</Text>
-        <TextInput
-          style={styles.inputAmount}
+        <Input
+          label="Amount"
           placeholder="0"
-          placeholderTextColor={colors.textTertiary}
           keyboardType="numeric"
           value={amount}
           onChangeText={setAmount}
           autoFocus
+          style={{ fontSize: 32, fontWeight: 'bold', height: 60 }}
         />
 
-        <Text variant="caption" color={colors.textSecondary} style={{ marginTop: spacing.lg }}>Note</Text>
-        <TextInput
-          style={styles.inputNote}
+        <Input
+          label="Note"
           placeholder="What is this for?"
-          placeholderTextColor={colors.textTertiary}
           value={note}
           onChangeText={setNote}
+          multiline
         />
 
         <Text variant="caption" color={colors.textSecondary} style={{ marginVertical: spacing.lg }}>Category</Text>
@@ -141,22 +140,6 @@ const styles = StyleSheet.create({
   form: {
     padding: spacing.lg,
     flex: 1,
-  },
-  inputAmount: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  inputNote: {
-    fontSize: 16,
-    color: colors.textPrimary,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingVertical: spacing.sm,
   },
   categoryItem: {
     alignItems: 'center',

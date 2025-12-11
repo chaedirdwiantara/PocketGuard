@@ -75,7 +75,11 @@ const DashboardComponent = ({ transactions, navigation }: DashboardProps) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Text variant="body" color={colors.textSecondary}>No transactions yet.</Text>
+              <Text variant="h2" style={{ marginBottom: spacing.xs }}>👋</Text>
+              <Text variant="body" weight="medium" style={{ marginBottom: spacing.xs }}>No transactions yet</Text>
+              <Text variant="caption" color={colors.textSecondary} centered>
+                Start by adding your first income or expense manually.
+              </Text>
             </View>
           }
         />
