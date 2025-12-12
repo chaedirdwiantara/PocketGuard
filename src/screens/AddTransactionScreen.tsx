@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@theme/colors';
-import { spacing, borderRadius, shadows } from '@theme/spacing';
+import { spacing, borderRadius } from '@theme/spacing';
 import { Text } from '@components/atoms/Text';
 import { Button } from '@components/atoms/Button';
 import { Input } from '@components/atoms/Input';

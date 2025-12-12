@@ -1,6 +1,5 @@
 import { database } from '../index';
 import Category from '../models/Category';
-import { Model } from '@nozbe/watermelondb';
 
 const categoriesCollection = database.get<Category>('categories');
 

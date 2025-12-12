@@ -1,6 +1,5 @@
 import { database } from '../index';
 import Transaction from '../models/Transaction';
-import Category from '../models/Category';
 import { Q } from '@nozbe/watermelondb';
 
 const transactionsCollection = database.get<Transaction>('transactions');

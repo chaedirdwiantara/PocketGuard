@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@theme/colors';
 import { spacing } from '@theme/spacing';
@@ -15,11 +15,12 @@ export const WelcomeScreen = () => {
   const [income, setIncome] = useState('');
 
   const handleNext = () => {
-    if (!income) return;
-    // Pass income to next screen or store in global state (WIP)
-    // For now, let's just log it and move to BudgetSetup (to be created)
-    console.log('Income:', income);
-    navigation.navigate('BudgetSetup', { income: parseInt(income) });
+    const incomeValue = parseInt(income, 10);
+    if (isNaN(incomeValue) || incomeValue <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid monthly income');
+      return;
+    }
+    navigation.navigate('BudgetSetup', { income: incomeValue });
   };
 
   return (

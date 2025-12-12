@@ -1,5 +1,4 @@
 import { TextStyle } from 'react-native';
-import { colors } from './colors';
 import { sizes } from './spacing';
 
 export const weight = {
