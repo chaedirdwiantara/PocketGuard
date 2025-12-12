@@ -36,6 +36,12 @@ export const BudgetSetupScreen = () => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState('#888888');
 
+  // Manual Allocation Edit State
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingItem, setEditingItem] = useState<{ id: string, name: string } | null>(null);
+  const [editNominal, setEditNominal] = useState('');
+  const [editPercentage, setEditPercentage] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const setHasCompletedOnboarding = useUserStore(state => state.setHasCompletedOnboarding);
 
@@ -58,6 +64,60 @@ export const BudgetSetupScreen = () => {
     ]);
     setNewCategoryName('');
     setModalVisible(false);
+  };
+
+  // Manual Allocation Handlers
+  const openEditModal = (item: { id: string, name: string, defaultPct: number }) => {
+    setEditingItem(item);
+    const amount = (income * item.defaultPct) / 100;
+    setEditPercentage(item.defaultPct.toString());
+    setEditNominal(Math.round(amount).toString());
+    setEditModalVisible(true);
+  };
+
+  const handleNominalChange = (text: string) => {
+    // Remove non-numeric characters for calculation
+    const cleanValue = text.replace(/[^0-9]/g, '');
+    setEditNominal(cleanValue);
+    
+    if (cleanValue) {
+        const nominal = parseInt(cleanValue, 10);
+        const derivedPct = (nominal / income) * 100;
+        // Limit to 2 decimals for display, but logic uses float
+        setEditPercentage(derivedPct.toFixed(1)); 
+    } else {
+        setEditPercentage('0');
+    }
+  };
+
+  const handlePercentageChange = (text: string) => {
+    setEditPercentage(text);
+    const pct = parseFloat(text);
+    if (!isNaN(pct)) {
+        const derivedNominal = (income * pct) / 100;
+        setEditNominal(Math.round(derivedNominal).toString());
+    } else {
+        setEditNominal('0');
+    }
+  };
+
+  const saveManualAllocation = () => {
+      if (editingItem) {
+          const finalPct = parseFloat(editPercentage);
+          const cleanNominal = parseInt(editNominal, 10);
+          
+          // Validation: Ensure valid number
+          if (isNaN(finalPct) || isNaN(cleanNominal)) {
+              Alert.alert('Invalid Input', 'Please enter valid numbers');
+              return;
+          }
+
+          // Update allocation
+          handleUpdatePercentage(editingItem.id, finalPct);
+          
+          setEditModalVisible(false);
+          setEditingItem(null);
+      }
   };
 
   const handleFinish = async () => {
@@ -117,6 +177,50 @@ export const BudgetSetupScreen = () => {
     </Modal>
   );
 
+  const renderEditModal = () => (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={editModalVisible}
+      onRequestClose={() => setEditModalVisible(false)}
+    >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text variant="h3" style={{ marginBottom: spacing.sm }}>Edit {editingItem?.name}</Text>
+            <Text variant="caption" color={colors.textSecondary} style={{ marginBottom: spacing.md }}>
+                Adjust allocation manually
+            </Text>
+
+            <View style={{ width: '100%', gap: 15 }}>
+                <View>
+                    <Text variant="caption" style={{ marginBottom: 5 }}>Nominal (Rp)</Text>
+                    <Input 
+                        value={editNominal}
+                        onChangeText={handleNominalChange}
+                        keyboardType="numeric"
+                        placeholder="0"
+                    />
+                </View>
+                <View>
+                    <Text variant="caption" style={{ marginBottom: 5 }}>Percentage (%)</Text>
+                    <Input 
+                        value={editPercentage}
+                        onChangeText={handlePercentageChange}
+                        keyboardType="numeric" // float input might need careful handling on Android
+                        placeholder="0"
+                    />
+                </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
+                <Button label="Cancel" variant="outline" onPress={() => setEditModalVisible(false)} style={{ flex: 1 }} />
+                <Button label="Save" onPress={saveManualAllocation} style={{ flex: 1 }} />
+            </View>
+          </View>
+        </View>
+    </Modal>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -131,6 +235,13 @@ export const BudgetSetupScreen = () => {
                 <Text variant="caption" color={colors.primary}>Reset</Text>
             </TouchableOpacity>
         </View>
+        {/* Usage Hint Banner */}
+        <View style={styles.hintBanner}>
+            <Icon name="information-outline" size={20} color={colors.primary} />
+            <Text variant="caption" style={{ flex: 1, marginHorizontal: 10 }}>
+                Tip: Tap on the percentage or amount to edit manually ({'\u270F'}).
+            </Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -143,26 +254,32 @@ export const BudgetSetupScreen = () => {
                     <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: item.color + '20', justifyContent: 'center', alignItems: 'center' }}>
                        <Icon name={item.icon || 'tag'} size={24} color={item.color} />
                     </View>
-                    <View>
+                    <TouchableOpacity onPress={() => openEditModal(item)}>
                         <Text variant="body" weight="bold" style={{ color: item.color }}>{item.name}</Text>
-                        <Text variant="caption" color={colors.textSecondary}>
-                             Rp {amount.toLocaleString('id-ID')}
-                        </Text>
-                    </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Text variant="caption" color={colors.textSecondary}>
+                                Rp {amount.toLocaleString('id-ID')}
+                            </Text>
+                            <Icon name="pencil" size={12} color={colors.textSecondary} style={{ opacity: 0.5 }} />
+                        </View>
+                    </TouchableOpacity>
                  </View>
                  <View style={{ alignItems: 'flex-end', flexDirection: 'row', gap: 10 }}>
-                    <Text variant="body" weight="bold">{item.defaultPct}%</Text>
+                    <TouchableOpacity onPress={() => openEditModal(item)} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Text variant="body" weight="bold">{Math.round(item.defaultPct * 10) / 10}%</Text>
+                        <Icon name="pencil" size={12} color={colors.textSecondary} style={{ opacity: 0.5 }} />
+                    </TouchableOpacity>
                     {/* Delete setup */}
                     <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
                         <Icon name="trash-can-outline" size={20} color={colors.error} />
                     </TouchableOpacity>
                  </View>
                </View>
-               <Slider
-                 style={{ width: '100%', height: 40 }}
-                 minimumValue={0}
-                 maximumValue={100}
-                 step={5}
+                 <Slider
+                  style={{ width: '100%', height: 40 }}
+                  minimumValue={0}
+                  maximumValue={100}
+                  step={1}
                  value={item.defaultPct}
                  onValueChange={(val) => handleUpdatePercentage(item.id, val)}
                  minimumTrackTintColor={item.color}
@@ -197,6 +314,7 @@ export const BudgetSetupScreen = () => {
       </View>
 
       {renderModal()}
+      {renderEditModal()}
     </SafeAreaView>
   );
 };
@@ -272,5 +390,15 @@ const styles = StyleSheet.create({
       height: 30,
       borderRadius: 15,
       borderColor: '#000',
+  },
+  hintBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      padding: spacing.sm,
+      marginTop: spacing.sm,
+      borderRadius: borderRadius.sm,
+      borderWidth: 1,
+      borderColor: colors.primary + '30', // Low opacity primary
   }
 });
