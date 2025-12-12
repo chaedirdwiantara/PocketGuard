@@ -5,10 +5,11 @@ import { schema } from './schema';
 import Category from './models/Category';
 import Transaction from './models/Transaction';
 
+import migrations from './migrations';
+
 const adapter = new SQLiteAdapter({
     schema,
-    // (You might want to comment out migration events for now if not needed)
-    // migrations, 
+    migrations,
     jsi: true, /* Platform.OS === 'ios' */
     onSetUpError: error => {
         // Database failed to load -- offer the user to reload the app or log out

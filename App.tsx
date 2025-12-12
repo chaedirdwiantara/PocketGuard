@@ -2,17 +2,17 @@
  * PocketGuard - Step 2 Verification (Navigation)
  */
 
-import React from 'react';
-import { View } from 'react-native';
-import { RootNavigator } from '@navigation/RootNavigator';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { RootNavigator } from './src/navigation/RootNavigator';
+import { CategorySeeder } from '@database/seeds/CategorySeeder';
 
-function App(): React.JSX.Element {
+const App = () => {
   return (
     <SafeAreaProvider>
       <RootNavigator />
     </SafeAreaProvider>
   );
-}
+};
 
 export default App;

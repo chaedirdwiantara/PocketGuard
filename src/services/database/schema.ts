@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb';
 
 export const schema = appSchema({
-    version: 2,
+    version: 3,
     tables: [
         tableSchema({
             name: 'categories',
@@ -10,6 +10,8 @@ export const schema = appSchema({
                 { name: 'icon', type: 'string', isOptional: true },
                 { name: 'color', type: 'string' },
                 { name: 'type', type: 'string' }, // 'income' | 'expense'
+                { name: 'allocated_percentage', type: 'number', isOptional: true }, // For smart budget
+                { name: 'allocated_amount', type: 'number', isOptional: true }, // For fixed budget
                 { name: 'created_at', type: 'number' },
                 { name: 'updated_at', type: 'number' },
             ],

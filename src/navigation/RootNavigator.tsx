@@ -5,23 +5,23 @@ import { DashboardScreen } from '@screens/DashboardScreen';
 import { AddTransactionScreen } from '@screens/AddTransactionScreen';
 import { colors } from '@theme/colors';
 
+import { WelcomeScreen } from '@screens/onboarding/WelcomeScreen';
+import { BudgetSetupScreen } from '@screens/onboarding/BudgetSetupScreen';
+
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
+      <Stack.Navigator 
+        initialRouteName="Welcome"
+        screenOptions={{ 
           headerShown: false,
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTintColor: colors.textPrimary,
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
+          contentStyle: { backgroundColor: colors.background }
         }}
       >
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="BudgetSetup" component={BudgetSetupScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen 
           name="AddTransaction" 

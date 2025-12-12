@@ -9,6 +9,9 @@ export default class Category extends Model {
     @text('color') color!: string;
     @text('type') type!: 'income' | 'expense';
 
+    @field('allocated_percentage') allocatedPercentage?: number;
+    @field('allocated_amount') allocatedAmount?: number;
+
     @readonly @date('created_at') createdAt!: Date;
     @readonly @date('updated_at') updatedAt!: Date;
 }
