@@ -12,14 +12,33 @@ import Category from '@database/models/Category';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import Transaction from '@database/models/Transaction';
+
+
+type AddTransactionRouteProp = RouteProp<RootStackParamList, 'AddTransaction'>;
 
 export const AddTransactionScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [amount, setAmount] = useState('');
-  const [note, setNote] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const route = useRoute<AddTransactionRouteProp>();
+  const editingTransaction = route.params?.transaction as Transaction | undefined;
+
+  const [amount, setAmount] = useState(editingTransaction ? Math.round(editingTransaction.amount).toString() : '');
+  const [note, setNote] = useState(editingTransaction?.note || '');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(editingTransaction?.category?.id || null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Hack to get initial category ID if it's a relation and not loaded yet
+  // In WatermelonDB relation access is async or requires `_raw` for sync ID access.
+  useEffect(() => {
+      if (editingTransaction && !selectedCategory) {
+           // Try to get accessible category ID if relation not resolved synchronously
+           // @ts-ignore
+           const rawId = editingTransaction._raw?.category_id;
+           if (rawId) setSelectedCategory(rawId);
+      }
+  }, [editingTransaction, selectedCategory]);
 
   useEffect(() => {
     // Fetch categories eagerly for the selector
@@ -38,20 +57,56 @@ export const AddTransactionScreen = () => {
 
     try {
       setIsSubmitting(true);
-      await TransactionRepository.create(
-        parseInt(amount),
-        'expense', // Default to expense for now, can add toggle later
-        selectedCategory,
-        new Date(),
-        note
-      );
+        // If editing
+        if (editingTransaction) {
+           await TransactionRepository.update(editingTransaction.id, {
+               amount: parseInt(amount, 10),
+               categoryId: selectedCategory,
+               note: note
+           });
+        } else {
+           // Create new
+            await TransactionRepository.create(
+                parseInt(amount, 10),
+                'expense',
+                selectedCategory,
+                new Date(),
+                note
+            );
+        }
       navigation.goBack();
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Failed to save transaction');
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
+  };
+
+  const handleDelete = () => {
+      if (!editingTransaction) return;
+      
+      Alert.alert(
+          'Delete Transaction',
+          'Are you sure you want to delete this transaction?',
+          [
+              { text: 'Cancel', style: 'cancel' },
+              { 
+                  text: 'Delete', 
+                  style: 'destructive',
+                  onPress: async () => {
+                      try {
+                          setIsSubmitting(true);
+                          await TransactionRepository.delete(editingTransaction.id);
+                          navigation.goBack();
+                      } catch {
+                          Alert.alert('Error', 'Failed to delete');
+                          setIsSubmitting(false);
+                      }
+                  }
+              }
+          ]
+      );
   };
 
   const renderCategoryItem = ({ item }: { item: Category }) => {
@@ -76,8 +131,10 @@ export const AddTransactionScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text variant="body" color={colors.primary}>Cancel</Text>
         </TouchableOpacity>
-        <Text variant="h3">Add Transaction</Text>
-        <View style={{ width: 50 }} /> 
+        <Text variant="h3">{editingTransaction ? 'Edit Transaction' : 'Add Transaction'}</Text>
+        <TouchableOpacity onPress={handleDelete} disabled={!editingTransaction}>
+            <Text variant="body" color={editingTransaction ? colors.error : 'transparent'}>Delete</Text>
+        </TouchableOpacity> 
       </View>
 
       <View style={styles.form}>
@@ -114,7 +171,7 @@ export const AddTransactionScreen = () => {
 
       <View style={styles.footer}>
         <Button 
-          label="Save Transaction" 
+          label={editingTransaction ? "Update Transaction" : "Save Transaction"} 
           onPress={handleSave} 
           isLoading={isSubmitting}
           fullWidth

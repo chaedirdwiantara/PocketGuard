@@ -34,6 +34,38 @@ export const TransactionRepository = {
         });
     },
 
+    // Update a transaction
+    update: async (
+        id: string,
+        updates: {
+            amount?: number;
+            type?: 'income' | 'expense';
+            categoryId?: string;
+            date?: Date;
+            note?: string;
+        }
+    ) => {
+        return await database.write(async () => {
+            const tx = await transactionsCollection.find(id);
+            await tx.update(t => {
+                if (updates.amount !== undefined) t.amount = updates.amount;
+                if (updates.type !== undefined) t.type = updates.type;
+                if (updates.categoryId !== undefined) t.category.id = updates.categoryId;
+                if (updates.date !== undefined) t.date = updates.date;
+                if (updates.note !== undefined) t.note = updates.note;
+            });
+        });
+    },
+
+    // Delete a transaction
+    delete: async (id: string) => {
+        return await database.write(async () => {
+            const tx = await transactionsCollection.find(id);
+            await tx.markAsDeleted(); // Syncable delete
+            await tx.destroyPermanently(); // Or destroy permanently if no sync
+        });
+    },
+
     // Delete all 
     deleteAll: async () => {
         return await database.write(async () => {

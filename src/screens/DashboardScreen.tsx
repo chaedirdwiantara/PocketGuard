@@ -130,7 +130,9 @@ const DashboardComponent = ({ transactions, categories, navigation }: DashboardP
               </View>
           ) : (
             transactions.slice(0, 5).map(tx => (
-               <TransactionItem key={tx.id} transaction={tx} />
+              <TouchableOpacity key={tx.id} onPress={() => navigation.navigate('AddTransaction', { transaction: tx })}>
+                 <TransactionItem transaction={tx} />
+              </TouchableOpacity>
             ))
           )}
         </View>
